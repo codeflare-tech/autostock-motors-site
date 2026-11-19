@@ -1,0 +1,16 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs / local state
+*.log
+server.log
+cloudflared.log
+uploads/
+
+# Tests / local tooling (not needed in the deployed repo)
+e2e_*.py
+seed_vehicles.py
+cloudflared*.service

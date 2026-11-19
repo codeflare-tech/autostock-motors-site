@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings | Admin</title>
+<style>
+:root {
+  --bg: #0d0d0f; --bg-card: #141417; --fg: #e8e2d9; --fg-muted: #8a8580;
+  --accent: #c45d3e; --border: #2a2724; --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+.sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: #08080a; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+.sidebar h2 { font-size: 18px; color: var(--fg); margin-bottom: 20px; }
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 4px; }
+.nav-list a { display: block; padding: 10px 14px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; transition: all 0.2s; }
+.nav-list a:hover { background: rgba(196,93,62,0.15); color: var(--accent); }
+.nav-list a.active { background: rgba(196,93,62,0.2); color: var(--accent); font-weight: 600; }
+.user-box { margin-top: 30px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; }
+.user-box .name { font-size: 14px; font-weight: 600; color: var(--fg); }
+.user-box .email { font-size: 12px; color: var(--fg-muted); }
+.main { margin-left: 240px; padding: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+.form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+.form-grid { display: grid; grid-template-columns: 200px 1fr; gap: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 8px; }
+.form-group input { width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-size: 15px; outline: none; }
+.form-group input:focus { border-color: var(--accent); }
+.btn-submit { padding: 16px 32px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; }
+.btn-submit:hover { background: var(--accent-hover); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="nav-list">
+      <li><a href="/admin/">Dashboard</a></li>
+      <li><a href="/admin/vehicles">All Vehicles</a></li>
+      <li><a href="/admin/leads">Leads &amp; Pipeline</a></li>
+      <li><a href="/admin/applications">Applications</a></li>
+      <li><a href="/admin/test-drives">Test Drives</a></li>
+      <li><a href="/admin/contacts">Contacts</a></li>
+      <li><a href="/admin/settings" class="active">Settings</a></li>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <h1>Website Settings</h1>
+    </div>
+
+    <div class="form-card">
+      <form method="post" action="/admin/settings">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="site_name">Site Name</label>
+            <input type="text" id="site_name" name="site_name" value="{{ settings.get('site_name', 'AutoStock') }}">
+          </div>
+          <div class="form-group">
+            <label for="site_tagline">Tagline</label>
+            <input type="text" id="site_tagline" name="site_tagline" value="{{ settings.get('site_tagline', 'Find Your Perfect Drive') }}">
+          </div>
+          <div class="form-group">
+            <label for="company_name">Company Name</label>
+            <input type="text" id="company_name" name="company_name" value="{{ settings.get('company_name', 'AutoStock Motors') }}">
+          </div>
+          <div class="form-group">
+            <label for="company_address">Company Address</label>
+            <input type="text" id="company_address" name="company_address" value="{{ settings.get('company_address', '123 Main Street, Johannesburg, Gauteng') }}">
+          </div>
+          <div class="form-group">
+            <label for="company_phone">Phone</label>
+            <input type="text" id="company_phone" name="company_phone" value="{{ settings.get('company_phone', '+27 11 555 0199') }}">
+          </div>
+          <div class="form-group">
+            <label for="company_email">Email</label>
+            <input type="email" id="company_email" name="company_email" value="{{ settings.get('company_email', 'info@autostock.co.za') }}">
+          </div>
+          <div class="form-group">
+            <label for="company_website">Website</label>
+            <input type="text" id="company_website" name="company_website" value="{{ settings.get('company_website', 'https://autostock.co.za') }}">
+          </div>
+          <div class="form-group">
+            <label for="license_plates">License Plate Format Example</label>
+            <input type="text" id="license_plates" name="license_plates" value="{{ settings.get('license_plates', 'ABC 123') }}">
+          </div>
+          <div class="form-group">
+            <label for="test_drive_hours">Test Drive Office Hours</label>
+            <input type="text" id="test_drive_hours" name="test_drive_hours" value="{{ settings.get('test_drive_hours', '08:00 - 17:00 (Mon - Fri)') }}">
+          </div>
+          <div class="form-group">
+            <label for="show_on_homepage_count">Show on Homepage (max vehicles)</label>
+            <input type="number" id="show_on_homepage_count" name="show_on_homepage_count" value="{{ settings.get('show_on_homepage_count', '3') }}" min="1" max="10">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:24px;">
+          <button type="submit" class="btn-submit">Save Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

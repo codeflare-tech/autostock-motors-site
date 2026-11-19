@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ 'Edit Vehicle' if vehicle else 'Add Vehicle' }}</title>
+<style>
+:root {
+  --bg: #0d0d0f; --bg-card: #141417; --bg-card-hover: #1a1a22;
+  --fg: #e8e2d9; --fg-muted: #8a8580; --accent: #c45d3e; --accent-hover: #e06a4a;
+  --border: #2a2724; --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+.container { max-width: 900px; margin: 0 auto; padding: 24px; }
+.sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: #08080a; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+.sidebar h2 { font-size: 18px; color: var(--fg); margin-bottom: 20px; }
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 4px; }
+.nav-list a { display: block; padding: 10px 14px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; transition: all 0.2s; }
+.nav-list a:hover { background: rgba(196,93,62,0.15); color: var(--accent); }
+.main { margin-left: 240px; padding: 24px; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; }
+.form-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px;
+}
+.form-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 8px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--fg); font-size: 15px; outline: none;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+.form-option {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px;
+  cursor: pointer; transition: all 0.2s; font-size: 14px; color: var(--fg);
+}
+.form-option:hover { border-color: var(--accent); }
+.form-option input { display: none; }
+.form-option.checked { border-color: var(--accent); background: rgba(196,93,62,0.1); }
+.form-option .option-label { font-weight: 500; }
+.btn-submit {
+  width: 100%; padding: 16px; border: none; border-radius: 8px; background: var(--accent);
+  color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 20px;
+}
+.btn-submit:hover { background: var(--accent-hover); color: #fff; }
+.back-link { display: inline-block; margin-bottom: 16px; color: var(--fg-muted); font-size: 14px; }
+.back-link:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="nav-list">
+    <li><a href="/admin/vehicles">All Vehicles</a></li>
+    <li><a href="/admin/vehicles/new" class="active">Add Vehicle</a></li>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>{{ 'Edit Vehicle' if vehicle else 'Add Vehicle' }}</h1>
+  </div>
+
+  <div class="form-card">
+    <h2 class="form-title">{{ 'Edit Vehicle Details' if vehicle else 'Enter Vehicle Details' }}</h2>
+    <form method="post" action="{{ action if action else '/admin/vehicles' }}">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="make">Make *</label>
+          <input type="text" id="make" name="make" value="{{ vehicle.make if vehicle else '' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="model">Model *</label>
+          <input type="text" id="model" name="model" value="{{ vehicle.model if vehicle else '' }}" required>
+        </div>
+        <div class="form-group">
+          <label for="year">Year *</label>
+          <input type="number" id="year" name="year" value="{{ vehicle.year if vehicle else '' }}" required min="1900" max="2030">
+        </div>
+        <div class="form-group">
+          <label for="price">Price (ZAR) *</label>
+          <input type="number" id="price" name="price" value="{{ vehicle.price if vehicle else '' }}" required min="0" step="1000">
+        </div>
+        <div class="form-group">
+          <label for="currency">Currency</label>
+          <select id="currency" name="currency">
+            <option value="ZAR" {% if vehicle and vehicle.currency == 'ZAR' %}selected{% endif %}>ZAR (South African Rand)</option>
+            <option value="USD" {% if vehicle and vehicle.currency == 'USD' %}selected{% endif %}>USD</option>
+            <option value="EUR" {% if vehicle and vehicle.currency == 'EUR' %}selected{% endif %}>EUR</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mileage">Mileage (km)</label>
+          <input type="number" id="mileage" name="mileage" value="{{ vehicle.mileage if vehicle else '' }}" min="0" step="100">
+        </div>
+        <div class="form-group">
+          <label for="color">Color</label>
+          <input type="text" id="color" name="color" value="{{ vehicle.color if vehicle else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="fuel_type">Fuel Type *</label>
+          <select id="fuel_type" name="fuel_type">
+            <option value="Petrol" {% if vehicle and vehicle.fuel_type == 'Petrol' %}selected{% endif %}>Petrol</option>
+            <option value="Diesel" {% if vehicle and vehicle.fuel_type == 'Diesel' %}selected{% endif %}>Diesel</option>
+            <option value="Electric" {% if vehicle and vehicle.fuel_type == 'Electric' %}selected{% endif %}>Electric</option>
+            <option value="Hybrid" {% if vehicle and vehicle.fuel_type == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+            <option value="LPG" {% if vehicle and vehicle.fuel_type == 'LPG' %}selected{% endif %}>LPG</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="transmission">Transmission *</label>
+          <select id="transmission" name="transmission">
+            <option value="Manual" {% if vehicle and vehicle.transmission == 'Manual' %}selected{% endif %}>Manual</option>
+            <option value="Automatic" {% if vehicle and vehicle.transmission == 'Automatic' %}selected{% endif %}>Automatic</option>
+            <option value="CVT" {% if vehicle and vehicle.transmission == 'CVT' %}selected{% endif %}>CVT</option>
+            <option value="Dual Clutch" {% if vehicle and vehicle.transmission == 'Dual Clutch' %}selected{% endif %}>Dual Clutch</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="body_type">Body Type *</label>
+          <select id="body_type" name="body_type">
+            <option value="Sedan" {% if vehicle and vehicle.body_type == 'Sedan' %}selected{% endif %}>Sedan</option>
+            <option value="Hatchback" {% if vehicle and vehicle.body_type == 'Hatchback' %}selected{% endif %}>Hatchback</option>
+            <option value="SUV" {% if vehicle and vehicle.body_type == 'SUV' %}selected{% endif %}>SUV</option>
+            <option value="Coupe" {% if vehicle and vehicle.body_type == 'Coupe' %}selected{% endif %}>Coupe</option>
+            <option value="Wagon" {% if vehicle and vehicle.body_type == 'Wagon' %}selected{% endif %}>Wagon</option>
+            <option value="Convertible" {% if vehicle and vehicle.body_type == 'Convertible' %}selected{% endif %}>Convertible</option>
+            <option value="Pickup" {% if vehicle and vehicle.body_type == 'Pickup' %}selected{% endif %}>Pickup</option>
+            <option value="Van" {% if vehicle and vehicle.body_type == 'Van' %}selected{% endif %}>Van</option>
+            <option value="Minivan" {% if vehicle and vehicle.body_type == 'Minivan' %}selected{% endif %}>Minivan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="condition">Condition *</label>
+          <select id="condition" name="condition">
+            <option value="New" {% if vehicle and vehicle.condition == 'New' %}selected{% endif %}>New</option>
+            <option value="Used" {% if vehicle and vehicle.condition == 'Used' %}selected{% endif %}>Used</option>
+            <option value="Demo" {% if vehicle and vehicle.condition == 'Demo' %}selected{% endif %}>Demo / Rally</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="state">Stock Status</label>
+          <select id="state" name="state">
+            <option value="New" {% if vehicle and vehicle.state == 'New' %}selected{% endif %}>Available (New)</option>
+            <option value="Used" {% if vehicle and vehicle.state == 'Used' %}selected{% endif %}>Available (Used)</option>
+            <option value="Sold" {% if vehicle and vehicle.state == 'Sold' %}selected{% endif %}>Sold</option>
+            <option value="In Service" {% if vehicle and vehicle.state == 'In Service' %}selected{% endif %}>In Service</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="vin">VIN</label>
+          <input type="text" id="vin" name="vin" value="{{ vehicle.vin if vehicle else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="trim">Trim / Package</label>
+          <input type="text" id="trim" name="trim" value="{{ vehicle.trim if vehicle else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="engine">Engine</label>
+          <input type="text" id="engine" name="engine" value="{{ vehicle.engine if vehicle else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="horsepower">Horsepower</label>
+          <input type="number" id="horsepower" name="horsepower" value="{{ vehicle.horsepower if vehicle else '' }}" min="0" step="1">
+        </div>
+        <div class="form-group">
+          <label for="torque">Torque</label>
+          <input type="text" id="torque" name="torque" value="{{ vehicle.torque if vehicle else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="seats">Seats</label>
+          <input type="number" id="seats" name="seats" value="{{ vehicle.seats if vehicle else '' }}" min="1" step="1">
+        </div>
+        <div class="form-group">
+          <label for="boot_space_l">Boot Space (liters)</label>
+          <input type="number" id="boot_space_l" name="boot_space_l" value="{{ vehicle.boot_space_l if vehicle else '' }}" min="0" step="10">
+        </div>
+        <div class="form-group">
+          <label for="title">Title Status</label>
+          <select id="title" name="title">
+            <option value="Clear" {% if vehicle and vehicle.title == 'Clear' %}selected{% endif %}>Clear</option>
+            <option value="Collateral" {% if vehicle and vehicle.title == 'Collateral' %}selected{% endif %}>Collateral</option>
+            <option value="Outstanding" {% if vehicle and vehicle.title == 'Outstanding' %}selected{% endif %}>Outstanding</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="country">Country</label>
+          <input type="text" id="country" name="country" value="{{ vehicle.country if vehicle else 'South Africa' }}">
+        </div>
+        <div class="form-group">
+          <label for="province">Province</label>
+          <input type="text" id="province" name="province" value="{{ vehicle.province if vehicle else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city" value="{{ vehicle.city if vehicle else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" id="address" name="address" value="{{ vehicle.address if vehicle else '' }}">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="grid-column: span 2;">
+          <label for="description">Full Description</label>
+          <textarea id="description" name="description">{{ vehicle.description if vehicle else '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="short_description">Short Description (for listing)</label>
+        <textarea id="short_description" name="short_description">{{ vehicle.short_description if vehicle else '' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Vehicle Photos (one URL per line)</label>
+        <textarea id="photos" name="photos" style="min-height:80px;">{% if vehicle %}{% for p in vehicle.photos %}{{ p }}\n{% endfor %}{% endif %}</textarea>
+        <span class="form-hint">Paste one image URL per line. Images will be displayed as a gallery.</span>
+      </div>
+
+      <div class="form-options">
+        <label class="form-option">
+          <input type="checkbox" name="show_on_home" value="true" {% if vehicle and vehicle.show_on_home %}checked{% endif %}>
+          <span class="option-label">Show on homepage</span>
+        </label>
+        <label class="form-option">
+          <input type="checkbox" name="featured" value="true" {% if vehicle and vehicle.featured %}checked{% endif %}>
+          <span class="option-label">Featured (highlight on site)</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit">Save Vehicle</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

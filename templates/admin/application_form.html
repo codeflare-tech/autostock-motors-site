@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Application - Admin</title>
+<style>
+:root {
+  --bg: #0d0d0f; --bg-card: #141417; --fg: #e8e2d9; --fg-muted: #8a8580;
+  --accent: #c45d3e; --border: #2a2724; --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+.sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: #08080a; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+.sidebar h2 { font-size: 18px; color: var(--fg); margin-bottom: 20px; }
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 4px; }
+.nav-list a { display: block; padding: 10px 14px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; transition: all 0.2s; }
+.nav-list a:hover { background: rgba(196,93,62,0.15); color: var(--accent); }
+.nav-list a.active { background: rgba(196,93,62,0.2); color: var(--accent); font-weight: 600; }
+.main { margin-left: 240px; padding: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+.form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 8px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--fg); font-size: 15px; outline: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+.form-option { padding: 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; background: var(--bg); }
+.form-option:hover { border-color: var(--accent); }
+.form-option input { display: none; }
+.form-option.checked { border-color: var(--accent); background: rgba(196,93,62,0.1); }
+.form-option .option-label { font-weight: 500; }
+.btn-submit { width: 100%; padding: 16px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; }
+.btn-submit:hover { background: var(--accent-hover); color: #fff; }
+.back-link { display: inline-block; margin-bottom: 16px; color: var(--fg-muted); font-size: 14px; }
+.back-link:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="nav-list">
+    <li><a href="/admin/applications">All Applications</a></li>
+    <li><a href="/admin/applications/new" class="active">New Application</a></li>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>New Application</h1>
+  </div>
+
+  <div class="form-card">
+    <h2 class="form-title">Submit a new application</h2>
+    <form method="post" action="/admin/applications">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="full_name">Full Name *</label>
+          <input type="text" id="full_name" name="full_name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label for="preferred_make">Preferred Make</label>
+          <input type="text" id="preferred_make" name="preferred_make">
+        </div>
+        <div class="form-group">
+          <label for="preferred_model">Preferred Model</label>
+          <input type="text" id="preferred_model" name="preferred_model">
+        </div>
+        <div class="form-group">
+          <label for="preferred_year">Preferred Year</label>
+          <input type="number" id="preferred_year" name="preferred_year" min="1900" max="2030">
+        </div>
+        <div class="form-group">
+          <label for="preferred_fuel">Fuel Type</label>
+          <select id="preferred_fuel" name="preferred_fuel">
+            <option value="">Any</option>
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electric">Electric</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="LPG">LPG</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="preferred_transmission">Transmission</label>
+          <select id="preferred_transmission" name="preferred_transmission">
+            <option value="">Any</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatic">Automatic</option>
+            <option value="CVT">CVT</option>
+            <option value="Dual Clutch">Dual Clutch</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="preferred_body">Body Type</label>
+          <select id="preferred_body" name="preferred_body">
+            <option value="">Any</option>
+            <option value="Sedan">Sedan</option>
+            <option value="Hatchback">Hatchback</option>
+            <option value="SUV">SUV</option>
+            <option value="Coupe">Coupe</option>
+            <option value="Wagon">Wagon</option>
+            <option value="Convertible">Convertible</option>
+            <option value="Pickup">Pickup</option>
+            <option value="Van">Van</option>
+            <option value="Minivan">Minivan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="budget_min">Budget Min (ZAR)</label>
+          <input type="number" id="budget_min" name="budget_min" min="0" step="1000">
+        </div>
+        <div class="form-group">
+          <label for="budget_max">Budget Max (ZAR)</label>
+          <input type="number" id="budget_max" name="budget_max" min="0" step="1000">
+        </div>
+        <div class="form-group">
+          <label for="provinces">Location(s)</label>
+          <input type="text" id="provinces" name="provinces" placeholder="e.g. Gauteng, KZN">
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city">
+        </div>
+        <div class="form-group">
+          <label for="postal_code">Postal/Zip Code</label>
+          <input type="text" id="postal_code" name="postal_code">
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="source">Source</label>
+          <input type="text" id="source" name="source">
+        </div>
+        <div class="form-group">
+          <label for="referred_by">Referred By</label>
+          <input type="text" id="referred_by" name="referred_by">
+        </div>
+        <div class="form-group">
+          <label for="vehicle_id">Linked Vehicle (optional)</label>
+          <select id="vehicle_id" name="vehicle_id">
+            <option value="">None</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-options">
+        <label class="form-option">
+          <input type="checkbox" name="test_drive_needed" value="true">
+          <span class="option-label">Test drive needed</span>
+        </label>
+        <label class="form-option">
+          <input type="checkbox" name="trade_in_needed" value="true">
+          <span class="option-label">Trade-in needed</span>
+        </label>
+        <label class="form-option">
+          <input type="checkbox" name="financing_needed" value="true">
+          <span class="option-label">Financing needed</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit">Save Application</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

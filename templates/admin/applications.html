@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applications | Admin</title>
+<style>
+:root {
+  --bg: #0d0d0f; --bg-card: #141417; --bg-card-hover: #1a1a22;
+  --fg: #e8e2d9; --fg-muted: #8a8580; --accent: #c45d3e; --accent-hover: #e06a4a;
+  --border: #2a2724; --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+.container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+.sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: #08080a; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+.sidebar h2 { font-size: 18px; color: var(--fg); margin-bottom: 20px; }
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 4px; }
+.nav-list a { display: block; padding: 10px 14px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; transition: all 0.2s; }
+.nav-list a:hover { background: rgba(196,93,62,0.15); color: var(--accent); }
+.nav-list a.active { background: rgba(196,93,62,0.2); color: var(--accent); font-weight: 600; }
+.user-box { margin-top: 30px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; }
+.user-box .name { font-size: 14px; font-weight: 600; color: var(--fg); }
+.user-box .email { font-size: 12px; color: var(--fg-muted); }
+.main { margin-left: 240px; padding: 24px; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.page-title { font-size: 26px; font-weight: 700; }
+.page-header-actions { display: flex; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--bg-card); color: var(--fg); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--bg-card-hover); }
+</style>
+<style>
+.status-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.status-tag { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.status-tag-new { background: rgba(196,93,62,0.15); color: var(--accent); }
+.status-tag-viewed { background: rgba(120,120,160,0.15); color: #9a9aa0; }
+.status-tag-review { background: rgba(100,180,100,0.15); color: #64a064; }
+.status-tag-approved { background: rgba(60,140,200,0.15); color: #3ca0c8; }
+.status-tag-rejected { background: rgba(200,80,80,0.15); color: #c85050; }
+.status-tag-no-response { background: rgba(180,140,80,0.15); color: #b48c50; }
+.spacer { display: none; }  /* space column */
+</style>
+<style>
+.table-container { overflow-x: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: rgba(196,93,62,0.1); color: var(--fg-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+tr:last-child td { border-bottom: none; }
+</style>
+<style>
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px; }
+.stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
+.stat-number { font-size: 32px; font-weight: 700; color: var(--accent); }
+.stat-label { color: var(--fg-muted); font-size: 14px; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="user-box">
+    <div class="name">Admin</div>
+    <div class="email">admin@dealership.com</div>
+  </div>
+  <div class="nav-list">
+    <li><a href="/admin/">Dashboard</a></li>
+    <li><a href="/admin/vehicles">All Vehicles</a></li>
+    <li><a href="/admin/leads">Leads &amp; Pipeline</a></li>
+    <li><a href="/admin/applications" class="active">Applications</a></li>
+    <li><a href="/admin/test-drives">Test Drives</a></li>
+    <li><a href="/admin/contacts">Contacts</a></li>
+    <li><a href="/admin/settings">Settings</a></li>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1 class="page-title">Application Submissions</h1>
+    <a href="/admin/applications/new" class="btn btn-primary">+ New Application</a>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">{{ applications|length }}</div>
+      <div class="stat-label">Total Submissions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ applications|selectattr('status', '==' ,'New')|list|length }}</div>
+      <div class="stat-label">New</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ applications|selectattr('status', '==' ,'Approved')|list|length }}</div>
+      <div class="stat-label">Approved</div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Applicant</th>
+          <th>Preferred Vehicle</th>
+          <th>Budget</th>
+          <th>Test Drive</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th>Replies</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in applications %}
+        <tr>
+          <td>
+            <strong>{{ a.full_name }}</strong><br>
+            <span style="font-size:12px;color:var(--fg-muted);">{{ a.email }}</span>
+          </td>
+          <td>
+            {{ a.preferred_make or '—' }} {{ a.preferred_model or '' }}<br>
+            <span style="font-size:{{ a.preferred_year or '' }} {{ a.budget_min or 0 |money }} – R {{ a.budget_max or 0 |money }}        <td>
+            {% if a.test_drive_needed %}<span style="color:var(--accent);font-weight:600;">Yes</span>
+            {% else %}No{% endif %}
+          </td>
+          <td><span class="status-tag status-tag-{{ a.status|lower|replace(' ','-') }}">{{ a.status }}</span></td>
+          <td>{{ a.created_at }}</td>
+          <td>{{ a.replies_count }}</td>
+          <td><a href="/admin/applications/{{ a.id }}" class="btn btn-secondary" style="padding:6px 12px;font-size:12px;">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="empty-state">
+    <h3>No applications yet</h3>
+    <p>Customers who submit online applications will appear here.</p>
+  </div>
+</div>
+
+</body>
+</html>

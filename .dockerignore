@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+e2e_*.py
+seed_vehicles.py
+*.log
+cloudflared*.service
+server.log
+cloudflared.log
+.dockerignore
+Dockerfile
+render.yaml

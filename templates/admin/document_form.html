@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Document | Admin</title>
+<style>
+:root {
+  --bg: #0d0d0f; --bg-card: #141417; --fg: #e8e2d9; --fg-muted: #8a8580;
+  --accent: #c45d3e; --border: #2a2724; --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+.sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: #08080a; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+.sidebar h2 { font-size: 18px; color: var(--fg); margin-bottom: 20px; }
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 4px; }
+.nav-list a { display: block; padding: 10px 14px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; transition: all 0.2s; }
+.nav-list a:hover { background: rgba(196,93,62,0.15); color: var(--accent); }
+.nav-list a.active { background: rgba(196,93,62,0.2); color: var(--accent); font-weight: 600; }
+.main { margin-left: 240px; padding: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+.form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 8px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--fg); font-size: 15px; outline: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.btn-submit { width: 100%; padding: 16px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; }
+.btn-submit:hover { background: var(--accent-hover); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="nav-list">
+    <li><a href="/admin/documents">All Documents</a></li>
+    <li><a href="/admin/documents/new" class="active">New Document</a></li>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>New Document</h1>
+  </div>
+
+  <div class="form-card">
+    <form method="post" action="/admin/documents" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="file">File</label>
+        <input type="file" id="file" name="file" required>
+      </div>
+      <div class="form-group">
+        <label for="document_type">Document Type</label>
+        <select id="document_type" name="document_type">
+          <option value="ID">Identity Document</option>
+          <option value="ProofOfAddress">Proof of Address</option>
+          <option value="Payslip">Payslip</option>
+          <option value="BankStatement">Bank Statement</option>
+          <option value="ProofOfIncome">Proof of Income</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn-submit">Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

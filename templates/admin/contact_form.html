@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Contact | Admin</title>
+<style>
+:root {
+  --bg: #0d0d0f; --bg-card: #141417; --fg: #e8e2d9; --fg-muted: #8a8580;
+  --accent: #c45d3e; --border: #2a2724; --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+.sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: #08080a; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+.sidebar h2 { font-size: 18px; color: var(--fg); margin-bottom: 20px; }
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 4px; }
+.nav-list a { display: block; padding: 10px 14px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; transition: all 0.2s; }
+.nav-list a:hover { background: rgba(196,93,62,0.15); color: var(--accent); }
+.nav-list a.active { background: rgba(196,93,62,0.2); color: var(--accent); font-weight: 600; }
+.main { margin-left: 240px; padding: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+.form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 8px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--fg); font-size: 15px; outline: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.btn-submit { width: 100%; padding: 16px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; }
+.btn-submit:hover { background: var(--accent-hover); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="nav-list">
+    <li><a href="/admin/contacts">All Contacts</a></li>
+    <li><a href="/admin/contacts/new" class="active">New Contact</a></li>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>New Contact / Feedback</h1>
+  </div>
+
+  <div class="form-card">
+    <form method="post" action="/admin/contacts">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="full_name">Full Name *</label>
+          <input type="text" id="full_name" name="full_name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <select id="category" name="category" required>
+            <option value="General Enquiry">General Enquiry</option>
+            <option value="Test Drive Booking">Test Drive Booking</option>
+            <option value="Trade-In Inquiry">Trade-In Inquiry</option>
+            <option value="After Sales">After Sales</option>
+            <option value="Complaint">Complaint</option>
+            <option value="Partnership">Partnership</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject">
+        </div>
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="source">Source</label>
+          <input type="text" id="source" name="source" placeholder="e.g. Website, Walk-in, Referral">
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Save Contact</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

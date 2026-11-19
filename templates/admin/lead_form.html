@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Lead - Admin</title>
+<style>
+:root {
+  --bg: #0d0d0f; --bg-card: #141417; --fg: #e8e2d9; --fg-muted: #8a8580;
+  --accent: #c45d3e; --border: #2a2724; --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+.sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: #08080a; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+.sidebar h2 { font-size: 18px; color: var(--fg); margin-bottom: 20px; }
+.nav-list { list-style: none; }
+.nav-list li { margin-bottom: 4px; }
+.nav-list a { display: block; padding: 10px 14px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; transition: all 0.2s; }
+.nav-list a:hover { background: rgba(196,93,62,0.15); color: var(--accent); }
+.nav-list a.active { background: rgba(196,93,62,0.2); color: var(--accent); font-weight: 600; }
+.main { margin-left: 240px; padding: 24px; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 24px; font-weight: 700; }
+.form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+.form-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 8px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--fg); font-size: 15px; outline: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+.form-option { padding: 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; background: var(--bg); }
+.form-option:hover { border-color: var(--accent); }
+.form-option input { display: none; }
+.form-option.checked { border-color: var(--accent); background: rgba(196,93,62,0.1); }
+.form-option .option-label { font-weight: 500; }
+.btn-submit { width: 100%; padding: 16px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; }
+.btn-submit:hover { background: var(--accent-hover); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="nav-list">
+    <li><a href="/admin/leads">All Leads</a></li>
+    <li><a href="/admin/leads/new" class="active">New Lead</a></li>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>New Lead</h1>
+  </div>
+
+  <div class="form-card">
+    <h2 class="form-title">Create New Lead</h2>
+    <form method="post" action="/admin/leads">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="full_name">Full Name *</label>
+          <input type="text" id="full_name" name="full_name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label for="lead_source">Source *</label>
+          <select id="lead_source" name="lead_source" required>
+            <option value="">Select source</option>
+            <option value="Website">Website</option>
+            <option value="Phone">Phone</option>
+            <option value="Walk-in">Walk-in</option>
+            <option value="Third-party">Third-party</option>
+            <option value="Social">Social</option>
+            <option value="Referral">Referral</option>
+            <option value="Event">Event / Test-drive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="province">Province</label>
+          <input type="text" id="province" name="province">
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city">
+        </div>
+        <div class="form-group">
+          <label for="postal_code">Postal/Zip Code</label>
+          <input type="text" id="postal_code" name="postal_code">
+        </div>
+        <div class="form-group">
+          <label for="assigned_to">Assign To (Admin)</label>
+          <select id="assigned_to" name="assigned_to">
+            <option value="">Unassigned</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="vehicle_id">Linked Vehicle (optional)</label>
+          <select id="vehicle_id" name="vehicle_id">
+            <option value="">None</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="application_id">Linked Application (optional)</label>
+          <select id="application_id" name="application_id">
+            <option value="">None</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="priority">Priority *</label>
+          <select id="priority" name="priority">
+            <option value="Low">Low</option>
+            <option value="Normal" selected>Normal</option>
+            <option value="High">High</option>
+            <option value="Urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stage">Initial Stage *</label>
+          <select id="stage" name="stage">
+            <option value="New lead">New lead</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Test drive set">Test drive set</option>
+            <option value="Showed">Showed</option>
+            <option value="Credit app">Credit app / negotiation</option>
+            <option value="Deal agreed">Deal agreed</option>
+            <option value="Finance processing">Finance processing</option>
+            <option value="Sold">Sold</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Unsold nurture">Unsold nurture</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="status">Status *</label>
+          <select id="status" name="status">
+            <option value="Open">Open</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Appointment booked">Appointment booked</option>
+            <option value="Negotiating">Negotiating</option>
+            <option value="Sold">Sold</option>
+            <option value="Lost">Lost</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="next_follow_up_due">Next Follow-up Due</label>
+          <input type="datetime-local" id="next_follow_up_due" name="next_follow_up_due">
+        </div>
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes"></textarea>
+        </div>
+      </div>
+
+      <div class="form-options">
+        <label class="form-option">
+          <input type="checkbox" name="auto_create_application" value="true">
+          <span class="option-label">Auto-create application record</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit">Save Lead</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

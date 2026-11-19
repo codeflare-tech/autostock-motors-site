@@ -1,0 +1,15 @@
+# Render blueprint — deploys the Docker image as a free web service.
+# The image ships a pre-seeded SQLite database (11 vehicles + local images),
+# so the site is fully populated on first boot.
+services:
+  - type: web
+    name: autostock-motors
+    runtime: docker
+    plan: free
+    healthCheckPath: /cars
+    envVars:
+      - key: ADMIN_EMAIL
+        value: admin@dealership.com
+      # Fallback only used if the database is ever wiped and re-seeded.
+      - key: ADMIN_PASSWORD
+        sync: false

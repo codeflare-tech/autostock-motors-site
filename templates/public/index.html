@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-content">
+      <span class="hero-badge">{{ settings.site_name if settings and hasattr(settings, 'site_name') else 'AutoStock Motors' }}</span>
+      <h1>Find Your Perfect Drive</h1>
+      <p>Browse our curated collection of quality vehicles. From city cars to family SUVs — each one ready to call home.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="number">{{ featured|length + popular|length + recent|length }}</div>
+          <div class="label">Available Vehicles</div>
+        </div>
+        <div class="hero-stat">
+          <div class="number">{{ featured|length }}</div>
+          <div class="label">Featured</div>
+        </div>
+        <div class="hero-stat">
+          <div class="number">{{ settings.brand_confidence if settings else 0 }}%</div>
+          <div class="label">Buyer Confidence</div>
+        </div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <label for="search_make">Make</label>
+      <select id="search_make">
+        <option value="">Any make</option>
+        {% for v in featured %}
+        <option value="{{ v.make }}">{{ v.make }}</option>
+        {% endfor %}
+      </select>
+      <label for="search_model">Model</label>
+      <select id="search_model">
+        <option value="">Any model</option>
+        {% for v in vehicles %}
+        <option value="{{ v.model }}">{{ v.model }}</option>
+        {% endfor %}
+      </select>
+      <label for="search_year">Year</label>
+      <select id="search_year">
+        <option value="">Any year</option>
+        {% for v in vehicles %}
+        <option value="{{ v.year }}">{{ v.year }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn-search" onclick="window.location='/cars'">Search</button>
+    </div>
+  </div>
+</section>
+
+<section class="container" style="padding-top:48px;padding-bottom:48px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+    <h2 style="font-size:28px;font-weight:700;">Featured Vehicles</h2>
+    <a href="/cars" style="color:var(--accent);font-weight:600;">View all →</a>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;margin-top:24px;">
+    {% for v in featured[:6] %}
+    <a href="/cars/{{ v.id }}" style="display:block;text-decoration:none;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all 0.2s;">
+      <div style="height:180px;overflow:hidden;background:#1a1a22;">
+        {% if v.photos and v.photos[0] %}
+          <img src="{{ v.photos[0] }}" alt="{{ v.make }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
+        {% else %}
+          <img src="/static/images/car-placeholder.png" alt="{{ v.make }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
+        {% endif %}
+      </div>
+      <div style="padding:20px;">
+        <div style="font-size:15px;font-weight:700;color:var(--accent);">{{ v.make }} {{ v.model }}</div>
+        <div style="font-size:14px;color:var(--fg-muted);margin-top:6px;">{{ v.year }} · {{ v.body_type }}</div>
+        <div style="font-size:22px;font-weight:800;color:var(--fg);margin-top:12px;">R {{ v.price |money }}</div>
+        <div style="font-size:13px;color:var(--fg-muted);margin-top:6px;">{{ v.mileage }} km &middot; {{ v.fuel_type }}</div>
+        <div style="margin-top:12px;display:inline-block;padding:6px 14px;border-radius:20px;background:rgba(196,93,62,0.15);color:var(--accent);font-size:13px;font-weight:600;">{{ v.state }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
