@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Keep Render service awake
-        run: curl -fsS -o /dev/null https://autostock-motors.onrender.com/cars
+        run: curl -fsS -o /dev/null https://autostock-motors-d1a1.onrender.com/cars
