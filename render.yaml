@@ -13,3 +13,9 @@ services:
       # Fallback only used if the database is ever wiped and re-seeded.
       - key: ADMIN_PASSWORD
         sync: false
+      # Optional managed Postgres/MySQL for data that survives restarts.
+      # Point this at a free Neon/Supabase DB to keep form submissions and
+      # admin changes across sleeps/redeploys. Leave unset to use the
+      # pre-seeded SQLite database bundled in the image.
+      - key: DATABASE_URL
+        sync: false
