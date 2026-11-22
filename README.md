@@ -4,9 +4,9 @@ FastAPI car dealership — public site (vehicle listings, details, applications,
 
 ## Deploy (free)
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/codeflare-tech/autostock-motors)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/codeflare-tech/autostock-motors-site)
 
-Or open directly: <https://render.com/deploy?repo=https://github.com/codeflare-tech/autostock-motors>
+Or open directly: <https://render.com/deploy?repo=https://github.com/codeflare-tech/autostock-motors-site>
 
 ## Admin login
 
