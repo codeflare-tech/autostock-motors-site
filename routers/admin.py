@@ -8,10 +8,10 @@ import base64
 import uuid
 from datetime import date, datetime
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import APIRouter, Request, Form, Depends, HTTPException, status, File, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse, Response, JSONResponse
 from jinja2 import Undefined
 from sqlalchemy import desc, func, and_
 from sqlalchemy.orm import Session
@@ -43,6 +43,31 @@ print("ADMIN_TEMPLATES_DIR:", settings.TEMPLATES_DIR / "admin", "exists:", _os.p
 ADMIN_PREFIX = "/admin"
 UPLOAD_DIR = settings.UPLOAD_DIR
 MEDIA_URL = settings.MEDIA_URL
+
+# Public, unauthenticated directory for vehicle photos uploaded from the admin.
+# Served by the /static mount so images render on the public site.
+PHOTO_UPLOAD_DIR = settings.STATIC_DIR / "uploads"
+PHOTO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+PHOTO_EXTS = {"jpg", "jpeg", "png", "webp", "gif", "avif"}
+
+
+def _parse_photos(raw: str) -> list:
+    """Accept either a JSON list or plain newline/comma separated URLs."""
+    raw = (raw or "").strip()
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+        if isinstance(data, list):
+            return [str(x).strip() for x in data if str(x).strip()]
+        if isinstance(data, str) and data.strip():
+            return [data.strip()]
+    except (json.JSONDecodeError, TypeError):
+        pass
+    # Tolerate literal "\n" separators and plain text lists.
+    parts = re.split(r"[\n,]+", raw.replace("\\n", "\n"))
+    return [p.strip() for p in parts if p.strip()]
 
 
 # ---------------------------------------------------------------------------
@@ -207,9 +232,7 @@ async def admin_vehicle_create(
             "request": request, "error": "Year, price, mileage must be numbers",
         }, status_code=400)
 
-    photos_list = json.loads(photos) if photos else []
-    if isinstance(photos_list, str):  # single string wrapped
-        photos_list = [photos_list]
+    photos_list = _parse_photos(photos)
 
     vehicle = Vehicle(
         make=make.strip(), model=model.strip(), year=year_i, price=price_f,
@@ -231,6 +254,29 @@ async def admin_vehicle_create(
     db.flush()
     db.commit()
     return RedirectResponse(url="/admin/vehicles", status_code=303)
+
+
+@router.post("/vehicles/photos")
+async def admin_vehicle_photo_upload(
+    request: Request,
+    files: List[UploadFile] = File(...),
+    db: Session = Depends(get_db),
+):
+    """Accept one or more image uploads and return public /static URLs."""
+    get_current_user(request, db)
+    urls = []
+    for f in files:
+        filename = (getattr(f, "filename", None) or "").strip()
+        ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+        if ext not in PHOTO_EXTS:
+            continue
+        content = await f.read()
+        if not content:
+            continue
+        name = f"{uuid.uuid4().hex}.{ext}"
+        (PHOTO_UPLOAD_DIR / name).write_bytes(content)
+        urls.append(f"/static/uploads/{name}")
+    return JSONResponse({"urls": urls})
 
 
 @router.get("/vehicles/{vehicle_id}/edit", response_class=HTMLResponse)
@@ -289,7 +335,7 @@ async def admin_vehicle_update(
         v.title = title or None
         v.description = description or None
         v.short_description = short_description or None
-        v.photos = json.loads(photos) if photos else []
+        v.photos = _parse_photos(photos)
         v.show_on_home = show_on_home.lower() == "true"
         v.featured = featured.lower() == "true"
         v.province = province or None
