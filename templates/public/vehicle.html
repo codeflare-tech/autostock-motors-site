@@ -1,85 +1,134 @@
 {% extends "base.html" %}
+{% block title %}{{ vehicle.make }} {{ vehicle.model }} — AutoStock Motors{% endblock %}
+{% block nav_cars %}active{% endblock %}
 {% block content %}
-<section class="hero">
-  <div class="container hero-inner">
-    <div class="hero-content">
-      <span class="hero-badge">{{ settings.site_name if settings else 'AutoStock Motors' }}</span>
-      <h1>{{ vehicle.make }} {{ vehicle.model }}</h1>
-      <div style="font-size:18px;color:var(--fg-muted);margin-top:8px;">{{ vehicle.year }} · {{ vehicle.body_type }} · {{ vehicle.fuel_type }} · {{ vehicle.transmission }}</div>
-    </div>
-  </div>
-</section>
 
-<section class="container" style="padding:48px 0;">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
-    <div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;height:100%;">
-        <div style="height:100%;overflow:hidden;">
-          <img src="{{ vehicle.photos[0] if vehicle.photos else '/static/images/car-placeholder.png' }}" alt="{{ vehicle.make }} {{ vehicle.model }}" style="width:100%;height:100%;object-fit:cover;">
+<section class="section" style="padding-bottom:0;">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> / <a href="/cars">Cars</a> / {{ vehicle.make }} {{ vehicle.model }}</div>
+
+    <div class="two-col">
+      <div>
+        <div class="gallery-main">
+          <img id="mainPhoto" src="{{ vehicle.photos[0] if vehicle.photos else '/static/images/car-placeholder.png' }}" alt="{{ vehicle.make }} {{ vehicle.model }}">
         </div>
-        <div style="padding:16px;display:flex;gap:8px;flex-wrap:wrap;">
-          {% for p in vehicle.photos[1:5] %}
-          <img src="{{ p }}" alt="{{ vehicle.make }} {{ vehicle.model }}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">
+        {% if vehicle.photos and vehicle.photos|length > 1 %}
+        <div class="gallery-thumbs">
+          {% for p in vehicle.photos[:8] %}
+          <img src="{{ p }}" alt="{{ vehicle.make }} {{ vehicle.model }} photo {{ loop.index }}">
           {% endfor %}
         </div>
+        {% endif %}
+      </div>
+
+      <div>
+        <span class="pill">{{ vehicle.condition }}</span>
+        <h1 style="font-size:clamp(26px,3.6vw,40px);font-weight:900;text-transform:uppercase;margin-top:14px;">{{ vehicle.make }} {{ vehicle.model }}</h1>
+        <div class="card-meta" style="margin-top:6px;">{{ vehicle.year }} &middot; {{ vehicle.trim or vehicle.body_type }}</div>
+        <div class="price-tag" style="margin-top:18px;">R {{ vehicle.price_formatted }}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;">
+          <a href="#book" class="btn btn-gold">Book a Test Drive</a>
+          <a href="/applications?vehicle={{ vehicle.id }}" class="btn btn-ghost">Enquire</a>
+        </div>
+
+        <dl class="spec-grid" style="margin-top:26px;">
+          <div><dt>Year</dt><dd>{{ vehicle.year }}</dd></div>
+          <div><dt>Mileage</dt><dd>{{ vehicle.mileage if vehicle.mileage else 0 }} km</dd></div>
+          <div><dt>Fuel</dt><dd>{{ vehicle.fuel_type }}</dd></div>
+          <div><dt>Transmission</dt><dd>{{ vehicle.transmission }}</dd></div>
+          <div><dt>Body</dt><dd>{{ vehicle.body_type }}</dd></div>
+          <div><dt>Colour</dt><dd>{{ vehicle.color or '—' }}</dd></div>
+          <div><dt>Engine</dt><dd>{{ vehicle.engine or '—' }}</dd></div>
+          <div><dt>Power</dt><dd>{{ vehicle.horsepower ~ ' hp' if vehicle.horsepower else '—' }}</dd></div>
+          <div><dt>Torque</dt><dd>{{ vehicle.torque or '—' }}</dd></div>
+          <div><dt>Seats</dt><dd>{{ vehicle.seats or '—' }}</dd></div>
+          <div><dt>Boot Space</dt><dd>{{ vehicle.boot_space_l ~ ' L' if vehicle.boot_space_l else '—' }}</dd></div>
+          <div><dt>Location</dt><dd>{{ vehicle.city or vehicle.province or '—' }}</dd></div>
+        </dl>
       </div>
     </div>
-    <div>
-      <div class="price" style="font-size:36px;font-weight:800;color:var(--accent);margin-bottom:16px;">R {{ vehicle.price |money }}</div>
-      <div style="font-size:16px;color:var(--fg-muted);margin-bottom:16px;">
-        {{ vehicle.mileage }} km &middot; {{ vehicle.title }} &middot; {{ vehicle.trim or 'Standard' }}
+  </div>
+</section>
+
+{% if vehicle.description or vehicle.short_description %}
+<section class="section" style="padding-top:40px;">
+  <div class="container">
+    <h2 style="font-size:22px;font-weight:800;text-transform:uppercase;">About This Vehicle</h2>
+    <div class="divider"></div>
+    <p class="lead" style="max-width:none;">{{ vehicle.description or vehicle.short_description }}</p>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section-alt" id="book">
+  <div class="container">
+    <div class="two-col">
+      <div class="panel">
+        <h2 style="font-size:22px;font-weight:800;text-transform:uppercase;">Book a Test Drive</h2>
+        <div class="divider"></div>
+        <p class="lead" style="margin-bottom:24px;">Choose a weekday and a time that suits you — we'll have the keys ready.</p>
+        <form method="post" action="/test-drives/book">
+          <input type="hidden" name="vehicle_id" value="{{ vehicle.id }}">
+          <div class="form-grid">
+            <div class="field"><label for="td_first">First Name</label><input id="td_first" name="first_name" required></div>
+            <div class="field"><label for="td_last">Last Name</label><input id="td_last" name="last_name" required></div>
+            <div class="field"><label for="td_email">Email</label><input id="td_email" name="email" type="email" required></div>
+            <div class="field"><label for="td_phone">Phone</label><input id="td_phone" name="phone" type="tel" required></div>
+            <div class="field"><label for="td_date">Preferred Date</label><input id="td_date" name="appointment_date" type="date" required></div>
+            <div class="field"><label for="td_slot">Time Slot</label>
+              <select id="td_slot" name="time_slot" required>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+              </select>
+            </div>
+            <div class="field full"><label for="td_notes">Notes (optional)</label><textarea id="td_notes" name="notes"></textarea></div>
+          </div>
+          <div style="margin-top:22px;">
+            <button type="submit" class="btn btn-gold">Confirm Booking</button>
+          </div>
+        </form>
       </div>
 
-      <div style="margin-bottom:20px;">
-        <strong style="color:var(--fg);display:block;font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Specifications</strong>
-        <div style="font-size:15px;">
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span style="color:var(--fg-muted);">Engine</span><span style="font-weight:600;">{{ vehicle.engine or '—' }}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span style="color:var(--fg-muted);">Horsepower</span><span style="font-weight:600;">{{ vehicle.horsepower or '—' }}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span style="color:var(--fg-muted);">Torque</span><span style="font-weight:600;">{{ vehicle.torque or '—' }}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span style="color:var(--fg-muted);">Seats</span><span style="font-weight:600;">{{ vehicle.seats or '—' }}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span style="color:var(--fg-muted);">Boot Space</span><span style="font-weight:600;">{{ vehicle.boot_space_l or '—' }} L</span></div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;"><span style="color:var(--fg-muted);">Fuel Capacity</span><span style="font-weight:600;">{{ vehicle.fuel_capacity or '—' }} L</span></div>
+      <div class="panel">
+        <h3 style="font-size:18px;font-weight:800;text-transform:uppercase;">Visit Us</h3>
+        <div class="divider"></div>
+        <p class="lead" style="margin-bottom:20px;">123 Main Street, Johannesburg</p>
+        <p style="color:var(--muted);font-size:15px;margin-bottom:8px;">Sales: <a href="tel:+27115550199" style="color:var(--accent);">+27 11 555 0199</a></p>
+        <p style="color:var(--muted);font-size:15px;margin-bottom:8px;">Email: <a href="mailto:info@autostock.co.za" style="color:var(--accent);">info@autostock.co.za</a></p>
+        <p style="color:var(--muted);font-size:15px;">Mon–Fri 08:30–17:30<br>Sat 09:00–14:00</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if related %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>You May Also Like</h2>
+      <a class="more" href="/cars">View All &rarr;</a>
+    </div>
+    <div class="grid">
+      {% for v in related %}
+      <a class="card" href="/cars/{{ v.id }}">
+        <div class="card-media">
+          <img src="{{ v.photos[0] if v.photos else '/static/images/car-placeholder.png' }}" alt="{{ v.make }} {{ v.model }}" loading="lazy">
         </div>
-      </div>
-
-      <div style="margin-bottom:20px;">
-        <strong style="color:var(--fg);display:block;font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Location</strong>
-        <div style="font-size:15px;">
-          <div style="margin-bottom:4px;">{{ vehicle.address or '—' }}</div>
-          <div style="color:var(--fg-muted);font-size:14px;">{{ vehicle.province or '' }}, {{ vehicle.city or '' }}</div>
+        <div class="card-body">
+          <div class="card-title">{{ v.make }} {{ v.model }}</div>
+          <div class="card-meta">{{ v.year }} &middot; {{ v.fuel_type }}</div>
+          <div class="card-price">R {{ v.price_formatted }}</div>
         </div>
-      </div>
-
-      <div style="margin-bottom:20px;">
-        <strong style="color:var(--fg);display:block;font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Description</strong>
-        <div style="font-size:15px;color:var(--fg-muted);line-height:1.6;">{{ vehicle.short_description or vehicle.description or 'No description available.' }}</div>
-      </div>
-
-      <a href="/applications?vehicle_id={{ vehicle.id }}" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        Apply Online
       </a>
+      {% endfor %}
     </div>
   </div>
 </section>
+{% endif %}
 
-<section class="container" style="padding:48px 0;">
-  <h2 style="font-size:24px;font-weight:700;">Similar Vehicles</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;margin-top:24px;">
-    {% for v in vehicles %}
-    {% if v.id != vehicle.id %}
-    <a href="/cars/{{ v.id }}" style="display:block;text-decoration:none;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
-      <div style="height:140px;overflow:hidden;background:#1a1a22;">
-        <img src="{{ v.photos[0] if v.photos else '/static/images/car-placeholder.png' }}" alt="{{ v.make }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
-      </div>
-      <div style="padding:16px;">
-        <div style="font-size:14px;font-weight:700;color:var(--accent);">{{ v.make }} {{ v.model }}</div>
-        <div style="font-size:13px;color:var(--fg-muted);margin-top:4px;">{{ v.year }} · {{ v.body_type }}</div>
-        <div style="font-size:18px;font-weight:800;color:var(--fg);margin-top:8px;">R {{ vehicle.price |money }}</div>
-      </div>
-    </a>
-    {% endif %}
-    {% endfor %}
-  </div>
-</section>
 {% endblock %}

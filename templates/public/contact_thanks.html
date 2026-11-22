@@ -1,25 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Thank You | AutoStock</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: #0d0d0f; color: #e8e2d9; text-align: center; padding: 80px 24px; }
-.container { max-width: 640px; margin: 0 auto; }
-.icon { font-size: 64px; margin-bottom: 24px; }
-h1 { font-size: 36px; color: #c45d3e; margin-bottom: 16px; }
-p { color: #8a8580; font-size: 18px; line-height: 1.6; margin-bottom: 12px; }
-a { color: #c45d3e; text-decoration: none; margin-top: 24px; display: inline-block; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="icon">📬</div>
-  <h1>Message Sent</h1>
-  <p>Thanks for getting in touch. We'll get back to you as soon as possible.</p>
-  <a href="/contact">Send another message</a>
-</div>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Message Sent — AutoStock Motors{% endblock %}
+{% block nav_contact %}active{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container center" style="max-width:640px;">
+    <div style="font-size:56px;margin-bottom:18px;">📬</div>
+    <h1 style="font-size:clamp(26px,4vw,40px);font-weight:900;text-transform:uppercase;color:var(--accent);">Message Sent</h1>
+    <div class="divider center"></div>
+    <p class="lead">Thanks for getting in touch. We'll get back to you as soon as possible.</p>
+    <div class="hero-actions" style="margin-top:30px;">
+      <a href="/cars" class="btn btn-gold">Browse Our Inventory</a>
+      <a href="/" class="btn btn-ghost">Back Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

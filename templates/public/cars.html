@@ -1,105 +1,112 @@
 {% extends "base.html" %}
+{% block title %}Cars For Sale — AutoStock Motors{% endblock %}
+{% block nav_cars %}active{% endblock %}
 {% block content %}
-<section class="hero">
-  <div class="container hero-inner">
-    <div class="hero-content">
-      <span class="hero-badge">{{ settings.site_name if settings else 'AutoStock Motors' }}</span>
-      <h1>Search Our Inventory</h1>
-      <p>{{ vehicles|length }} vehicles available right now. Filter by make, model, body type, and more.</p>
+
+<section class="section" style="padding-bottom:0;">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> / Cars</div>
+    <div class="section-head">
+      <h2>Search Our Inventory</h2>
+      <span class="spec-chip">{{ vehicles|length }} vehicle{{ 's' if vehicles|length != 1 }} available</span>
     </div>
-    <div class="search-bar">
-      <label for="f_make">Make</label>
-      <select id="f_make" name="make" onchange="location=this.form.action" formaction="/cars">
-        <option value="">Any make</option>
-        {% for v in vehicles %}
-        <option value="{{ v.make }}" {% if request_params.get('make') == v.make %}selected{% endif %}>{{ v.make }}</option>
-        {% endfor %}
-      </select>
-      <label for="f_model">Model</label>
-      <select id="f_model" name="model">
-        <option value="">Any model</option>
-        {% for v in vehicles %}{% if v.model not in selected_models %}{% set _ = selected_models.append(v.model) %}{% endif %}
-        <option value="{{ v.model }}" {% if request_params.get('model') == v.model %}selected{% endif %}>{{ v.model }}</option>
-        {% endfor %}
-      </select>
-      <label for="f_year">Year</label>
-      <select id="f_year" name="year">
-        <option value="">Any year</option>
-        {% set seen_years = [] %}
-        {% for v in vehicles %}
-        {% if v.year not in seen_years %}
-        {% set seen_years = seen_years + [v.year] %}
-        <option value="{{ v.year }}" {% if request_params.get('year') == v.year|string %}selected{% endif %}>{{ v.year }}</option>
-        {% endif %}
-        {% endfor %}
-      </select>
-      <label for="f_body">Body Type</label>
-      <select id="f_body" name="body_type">
-        <option value="">Any body type</option>
-        <option value="SUV" {% if request_params.get('body_type') == 'SUV' %}selected{% endif %}>SUV</option>
-        <option value="Sedan" {% if request_params.get('body_type') == 'Sedan' %}selected{% endif %}>Sedan</option>
-        <option value="Hatchback" {% if request_params.get('body_type') == 'Hatchback' %}selected{% endif %}>Hatchback</option>
-        <option value="Coupe" {% if request_params.get('body_type') == 'Coupe' %}selected{% endif %}>Coupe</option>
-        <option value="Wagon" {% if request_params.get('body_type') == 'Wagon' %}selected{% endif %}>Wagon</option>
-        <option value="Convertible" {% if request_params.get('body_type') == 'Convertible' %}selected{% endif %}>Convertible</option>
-        <option value="Pickup" {% if request_params.get('body_type') == 'Pickup' %}selected{% endif %}>Pickup</option>
-        <option value="Van" {% if request_params.get('body_type') == 'Van' %}selected{% endif %}>Van</option>
-        <option value="Minivan" {% if request_params.get('body_type') == 'Minivan' %}selected{% endif %}>Minivan</option>
-      </select>
-      <label for="f_fuel">Fuel</label>
-      <select id="f_fuel" name="fuel_type">
-        <option value="">Any fuel</option>
-        <option value="Petrol" {% if request_params.get('fuel_type') == 'Petrol' %}selected{% endif %}>Petrol</option>
-        <option value="Diesel" {% if request_params.get('fuel_type') == 'Diesel' %}selected{% endif %}>Diesel</option>
-        <option value="Electric" {% if request_params.get('fuel_type') == 'Electric' %}selected{% endif %}>Electric</option>
-        <option value="Hybrid" {% if request_params.get('fuel_type') == 'Hybrid' %}selected{% endif %}>Hybrid</option>
-        <option value="LPG" {% if request_params.get('fuel_type') == 'LPG' %}selected{% endif %}>LPG</option>
-      </select>
-      <label for="f_condition">Condition</label>
-      <select id="f_condition" name="condition">
-        <option value="">Any condition</option>
-        <option value="New" {% if request_params.get('condition') == 'New' %}selected{% endif %}>New</option>
-        <option value="Used" {% if request_params.get('condition') == 'Used' %}selected{% endif %}>Used</option>
-        <option value="Demo" {% if request_params.get('condition') == 'Demo' %}selected{% endif %}>Demo</option>
-      </select>
-      <label for="f_price">Max Price</label>
-      <select id="f_price" name="max_price">
-        <option value="">Any price</option>
-        <option value="300000" {% if request_params.get('max_price') == '300000' %}selected{% endif %}>&le; R300k</option>
-        <option value="500000" {% if request_params.get('max_price') == '500000' %}selected{% endif %}>&le; R500k</option>
-        <option value="750000" {% if request_params.get('max_price') == '750000' %}selected{% endif %}>&le; R750k</option>
-        <option value="1000000" {% if request_params.get('max_price') == '1000000' %}selected{% endif %}>&le; R1M</option>
-        <option value="2000000" {% if request_params.get('max_price') == '2000000' %}selected{% endif %}>&le; R2M</option>
-      </select>
-      <button class="btn-search" onclick="location='/cars'">Apply</button>
-    </div>
+
+    <form class="filters" method="get" action="/cars">
+      <div>
+        <label for="f_make">Make</label>
+        <select id="f_make" name="make">
+          <option value="">Any make</option>
+          {% for m in makes %}
+          <option value="{{ m }}" {% if request_params.get('make') == m %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="f_model">Model</label>
+        <select id="f_model" name="model">
+          <option value="">Any model</option>
+          {% for m in selected_models %}
+          <option value="{{ m }}" {% if request_params.get('model') == m %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="f_body">Body Type</label>
+        <select id="f_body" name="body_type">
+          <option value="">Any body type</option>
+          {% for b in body_types %}
+          <option value="{{ b }}" {% if request_params.get('body_type') == b %}selected{% endif %}>{{ b }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="f_fuel">Fuel</label>
+        <select id="f_fuel" name="fuel_type">
+          <option value="">Any fuel</option>
+          {% for f in fuel_types %}
+          <option value="{{ f }}" {% if request_params.get('fuel_type') == f %}selected{% endif %}>{{ f }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="f_max_year">Min Year</label>
+        <input id="f_max_year" name="min_year" type="number" placeholder="e.g. 2018" value="{{ request_params.get('min_year','') }}">
+      </div>
+      <div>
+        <label for="f_price">Max Price</label>
+        <select id="f_price" name="max_price">
+          <option value="">Any price</option>
+          <option value="300000" {% if request_params.get('max_price') == '300000' %}selected{% endif %}>&le; R300k</option>
+          <option value="500000" {% if request_params.get('max_price') == '500000' %}selected{% endif %}>&le; R500k</option>
+          <option value="750000" {% if request_params.get('max_price') == '750000' %}selected{% endif %}>&le; R750k</option>
+          <option value="1000000" {% if request_params.get('max_price') == '1000000' %}selected{% endif %}>&le; R1M</option>
+          <option value="2000000" {% if request_params.get('max_price') == '2000000' %}selected{% endif %}>&le; R2M</option>
+        </select>
+      </div>
+      <div>
+        <label for="f_search">Search</label>
+        <input id="f_search" name="search" type="text" placeholder="e.g. Golf GTI" value="{{ request_params.get('search','') }}">
+      </div>
+      <div>
+        <button type="submit" class="btn btn-gold btn-block">Apply</button>
+      </div>
+    </form>
   </div>
 </section>
 
-<section class="container" style="padding-top:48px;padding-bottom:48px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
-    <h2 style="font-size:28px;font-weight:700;">
-      {{ vehicles|length }} vehicle{{ 's' if vehicles|length != 1 }}
-      {% if request_params.get('make') %}— {{ request_params.get('make') }}{% endif %}
-    </h2>
-    <a href="/cars/new" style="color:var(--accent);font-weight:600;">Sell your car →</a>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;">
-    {% for v in vehicles %}
-    <a href="/cars/{{ v.id }}" style="display:block;text-decoration:none;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all 0.2s;">
-      <div style="height:180px;overflow:hidden;background:#1a1a22;">
-        <img src="{{ v.photos[0] if v.photos else '/static/images/car-placeholder.png' }}" alt="{{ v.make }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
-      </div>
-      <div style="padding:20px;">
-        <div style="font-size:15px;font-weight:700;color:var(--accent);">{{ v.make }} {{ v.model }}</div>
-        <div style="font-size:14px;color:var(--fg-muted);margin-top:6px;">{{ v.year }} · {{ v.body_type }} · {{ v.fuel_type }}</div>
-        <div style="font-size:22px;font-weight:800;color:var(--fg);margin-top:12px;">R {{ v.price |money }}</div>
-        <div style="font-size:13px;color:var(--fg-muted);margin-top:6px;">{{ v.mileage }} km</div>
-        <div style="margin-top:12px;display:inline-block;padding:6px 14px;border-radius:20px;background:rgba(196,93,62,0.15);color:var(--accent);font-size:13px;font-weight:600;">{{ v.condition }}</div>
-      </div>
-    </a>
-    {% endfor %}
+<section class="section" style="padding-top:40px;">
+  <div class="container">
+    {% if vehicles %}
+    <div class="grid">
+      {% for v in vehicles %}
+      <a class="card" href="/cars/{{ v.id }}">
+        <div class="card-media">
+          {% if v.photos and v.photos[0] %}
+            <img src="{{ v.photos[0] }}" alt="{{ v.make }} {{ v.model }}" loading="lazy">
+          {% else %}
+            <img src="/static/images/car-placeholder.png" alt="{{ v.make }} {{ v.model }}" loading="lazy">
+          {% endif %}
+          {% if v.featured %}<span class="card-badge">Featured</span>{% endif %}
+        </div>
+        <div class="card-body">
+          <div class="card-title">{{ v.make }} {{ v.model }}</div>
+          <div class="card-meta">{{ v.year }} &middot; {{ v.body_type }} &middot; {{ v.fuel_type }} &middot; {{ v.transmission }}</div>
+          <div class="card-price">R {{ v.price_formatted }}</div>
+          <div class="card-foot">
+            <span class="card-link">View Details &rarr;</span>
+            <span class="spec-chip">{{ v.mileage if v.mileage else 0 }} km</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">
+      <h3>No vehicles match your filters</h3>
+      <p>Try widening your search, or <a href="/contact" style="color:var(--accent);">send us an enquiry</a> and we'll source it for you.</p>
+    </div>
+    {% endif %}
   </div>
 </section>
+
 {% endblock %}

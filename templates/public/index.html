@@ -1,78 +1,90 @@
 {% extends "base.html" %}
+{% block title %}AutoStock Motors — Certified Pre-Owned Cars in Johannesburg{% endblock %}
+{% block nav_home %}active{% endblock %}
 {% block content %}
+
 <section class="hero">
-  <div class="container hero-inner">
-    <div class="hero-content">
-      <span class="hero-badge">{{ settings.site_name if settings and hasattr(settings, 'site_name') else 'AutoStock Motors' }}</span>
-      <h1>Find Your Perfect Drive</h1>
-      <p>Browse our curated collection of quality vehicles. From city cars to family SUVs — each one ready to call home.</p>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <div class="number">{{ featured|length + popular|length + recent|length }}</div>
-          <div class="label">Available Vehicles</div>
-        </div>
-        <div class="hero-stat">
-          <div class="number">{{ featured|length }}</div>
-          <div class="label">Featured</div>
-        </div>
-        <div class="hero-stat">
-          <div class="number">{{ settings.brand_confidence if settings else 0 }}%</div>
-          <div class="label">Buyer Confidence</div>
-        </div>
-      </div>
+  <div class="hero-inner">
+    <h1>Get Behind the Wheel of a <span class="accent">Car You Actually Want.</span></h1>
+    <div class="sub">Certified Pre-Owned &middot; Johannesburg</div>
+    <div class="tag">Premium vehicles. Seamless finance. One trusted dealer.</div>
+    <div class="hero-actions">
+      <a href="/cars" class="btn btn-gold">View Cars</a>
+      <a href="/applications" class="btn btn-ghost">Apply for Finance</a>
     </div>
-    <div class="search-bar">
-      <label for="search_make">Make</label>
-      <select id="search_make">
-        <option value="">Any make</option>
-        {% for v in featured %}
-        <option value="{{ v.make }}">{{ v.make }}</option>
-        {% endfor %}
-      </select>
-      <label for="search_model">Model</label>
-      <select id="search_model">
-        <option value="">Any model</option>
-        {% for v in vehicles %}
-        <option value="{{ v.model }}">{{ v.model }}</option>
-        {% endfor %}
-      </select>
-      <label for="search_year">Year</label>
-      <select id="search_year">
-        <option value="">Any year</option>
-        {% for v in vehicles %}
-        <option value="{{ v.year }}">{{ v.year }}</option>
-        {% endfor %}
-      </select>
-      <button class="btn-search" onclick="window.location='/cars'">Search</button>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">{{ stats.total }}</div><div class="lbl">Vehicles In Stock</div></div>
+      <div class="hero-stat"><div class="num">{{ stats.suv }}</div><div class="lbl">SUVs &amp; Crossovers</div></div>
+      <div class="hero-stat"><div class="num">{{ stats.new }}</div><div class="lbl">New Arrivals</div></div>
     </div>
   </div>
 </section>
 
-<section class="container" style="padding-top:48px;padding-bottom:48px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
-    <h2 style="font-size:28px;font-weight:700;">Featured Vehicles</h2>
-    <a href="/cars" style="color:var(--accent);font-weight:600;">View all →</a>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;margin-top:24px;">
-    {% for v in featured[:6] %}
-    <a href="/cars/{{ v.id }}" style="display:block;text-decoration:none;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all 0.2s;">
-      <div style="height:180px;overflow:hidden;background:#1a1a22;">
-        {% if v.photos and v.photos[0] %}
-          <img src="{{ v.photos[0] }}" alt="{{ v.make }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
-        {% else %}
-          <img src="/static/images/car-placeholder.png" alt="{{ v.make }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
-        {% endif %}
-      </div>
-      <div style="padding:20px;">
-        <div style="font-size:15px;font-weight:700;color:var(--accent);">{{ v.make }} {{ v.model }}</div>
-        <div style="font-size:14px;color:var(--fg-muted);margin-top:6px;">{{ v.year }} · {{ v.body_type }}</div>
-        <div style="font-size:22px;font-weight:800;color:var(--fg);margin-top:12px;">R {{ v.price |money }}</div>
-        <div style="font-size:13px;color:var(--fg-muted);margin-top:6px;">{{ v.mileage }} km &middot; {{ v.fuel_type }}</div>
-        <div style="margin-top:12px;display:inline-block;padding:6px 14px;border-radius:20px;background:rgba(196,93,62,0.15);color:var(--accent);font-size:13px;font-weight:600;">{{ v.state }}</div>
-      </div>
-    </a>
-    {% endfor %}
+<section class="section">
+  <div class="container center">
+    <h2 style="font-size:clamp(24px,3.4vw,36px);font-weight:800;text-transform:uppercase;letter-spacing:-.5px;">Welcome to AutoStock Motors</h2>
+    <div class="divider center"></div>
+    <p class="lead">We make it happen with a premium selection of certified pre-owned vehicles and seamless finance options. Every car on our floor is inspected, history-checked and ready to drive away today.</p>
   </div>
 </section>
+
+{% if featured %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <h2>Featured Vehicles</h2>
+      <a class="more" href="/cars">View All &rarr;</a>
+    </div>
+    <div class="grid">
+      {% for v in featured %}
+      <a class="card" href="/cars/{{ v.id }}">
+        <div class="card-media">
+          {% if v.photos and v.photos[0] %}
+            <img src="{{ v.photos[0] }}" alt="{{ v.make }} {{ v.model }}" loading="lazy">
+          {% else %}
+            <img src="/static/images/car-placeholder.png" alt="{{ v.make }} {{ v.model }}" loading="lazy">
+          {% endif %}
+          {% if v.featured %}<span class="card-badge">Featured</span>{% endif %}
+        </div>
+        <div class="card-body">
+          <div class="card-title">{{ v.make }} {{ v.model }}</div>
+          <div class="card-meta">{{ v.year }} &middot; {{ v.body_type }} &middot; {{ v.fuel_type }}</div>
+          <div class="card-price">R {{ v.price_formatted }}</div>
+          <div class="card-foot">
+            <span class="card-link">View Details &rarr;</span>
+            <span class="spec-chip">{{ v.mileage if v.mileage else 0 }} km</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="two-col">
+      <div>
+        <h2 style="font-size:clamp(22px,3vw,32px);font-weight:800;text-transform:uppercase;">Finance Made Simple</h2>
+        <div class="divider"></div>
+        <p class="lead">We work with all major South African lenders to get you an approval that fits your budget — often the same day. Bring your ID and proof of income, and we'll handle the rest.</p>
+        <div class="hero-actions" style="justify-content:flex-start;margin-top:26px;">
+          <a href="/applications" class="btn btn-gold">Start Application</a>
+          <a href="/test-drives" class="btn btn-ghost">Book a Test Drive</a>
+        </div>
+      </div>
+      <div class="panel">
+        <h3 style="font-size:18px;font-weight:800;text-transform:uppercase;margin-bottom:18px;">Why Buy From Us</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:14px;color:var(--muted);font-size:15px;">
+          <li><strong style="color:var(--accent);">✓</strong> Certified pre-owned, fully inspected</li>
+          <li><strong style="color:var(--accent);">✓</strong> Clear vehicle history on every car</li>
+          <li><strong style="color:var(--accent);">✓</strong> Finance &amp; insurance handled in-house</li>
+          <li><strong style="color:var(--accent);">✓</strong> Trade-ins welcome, fair valuations</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
