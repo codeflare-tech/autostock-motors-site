@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/admin/static/admin.css">
 <title>Application {{ app.id }} | Admin</title>
 <style>
 :root {
@@ -95,7 +96,7 @@ body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-
         <div><div class="label">Preferred Make</div><div class="value">{{ app.preferred_make or '—' }}</div></div>
         <div><div class="label">Preferred Model</div><div class="value">{{ app.preferred_model or '—' }}</div></div>
         <div><div class="label">Preferred Year</div><div class="value">{{ app.preferred_year or '—' }}</div></div>
-        <div><div class="label">Budget Range</div><div class="value">R {{ (app.budget_min or 0)|money }} – R {{ (app.budget_max or 0)|money }}</div></div>
+        <div><div class="label">Budget Range</div><div class="value">{{ (app.budget_min or 0)|money }} – {{ (app.budget_max or 0)|money }}</div></div>
         <div><div class="label">Test Drive Needed</div><div class="value">{% if app.test_drive_needed %}Yes{% else %}No{% endif %}</div></div>
         <div><div class="label">Trade-In Needed</div><div class="value">{% if app.trade_in_needed %}Yes{% else %}No{% endif %}</div></div>
         <div><div class="label">Financing Needed</div><div class="value">{% if app.financing_needed %}Yes{% else %}No{% endif %}</div></div>
@@ -124,7 +125,7 @@ body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-
     <div class="details-grid">
       <div><div class="label">Make &amp; Model</div><div class="value">{{ app.vehicle.make }} {{ app.vehicle.model }}</div></div>
       <div><div class="label">Year</div><div class="value">{{ app.vehicle.year }}</div></div>
-      <div><div class="label">Price</div><div class="value">R {{ app.budget_min or 0 |money }}</div></div>
+      <div><div class="label">Price</div><div class="value">{{ app.budget_min or 0 |money }}</div></div>
       <div><div class="label">Body Type</div><div class="value">{{ app.vehicle.body_type }}</div></div>
       <div><div class="label">Fuel</div><div class="value">{{ app.vehicle.fuel_type }}</div></div>
       <div><div class="label">Condition</div><div class="value">{{ app.vehicle.condition }}</div></div>
@@ -165,5 +166,6 @@ function updateStatus(status) {
 }
 </script>
 
+<script src="/admin/static/admin.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,109 @@
+/* AutoStock admin — mobile shell & responsive overrides.
+   Loaded by every admin page. Desktop layout is unchanged. */
+
+/* ---- Mobile top bar (markup injected by admin.js) ---- */
+.admin-topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 58px;
+  display: none; align-items: center; gap: 10px;
+  padding: 0 12px; background: #08080a; border-bottom: 1px solid var(--border, #2a2724);
+  z-index: 300;
+}
+.admin-topbar .tb-brand {
+  font-size: 15px; font-weight: 800; letter-spacing: .3px; color: var(--fg, #e8e2d9);
+  white-space: nowrap;
+}
+.admin-topbar .tb-title {
+  font-size: 13px; color: var(--fg-muted, #8a8580);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 auto;
+}
+.admin-burger {
+  width: 44px; height: 44px; flex: 0 0 44px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: transparent; border: 1px solid var(--border, #2a2724); border-radius: 8px; cursor: pointer;
+}
+.admin-burger span { display: block; width: 20px; height: 2px; background: var(--fg, #e8e2d9); border-radius: 2px; }
+.admin-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.62);
+  opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 240;
+}
+.admin-backdrop.show { opacity: 1; pointer-events: auto; }
+
+/* ---- Scroll cue for wide tables (markup injected by admin.js) ---- */
+.table-wrap { position: relative; }
+.table-cue {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 42px;
+  background: linear-gradient(90deg, rgba(11,11,13,0), rgba(11,11,13,.88));
+  pointer-events: none; opacity: 0; transition: opacity .2s ease;
+}
+.table-cue.visible { opacity: 1; }
+@media (min-width: 901px) { .table-cue { display: none; } }
+
+/* ---- Tablet & phone ---- */
+@media (max-width: 900px) {
+  .admin-topbar { display: flex; }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 250;
+    box-shadow: 0 0 50px rgba(0,0,0,.65);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .main {
+    margin-left: 0 !important;
+    padding: 78px 16px 40px !important;
+  }
+
+  .container { padding: 0 16px; }
+
+  .page-header {
+    flex-direction: column; align-items: flex-start; gap: 14px;
+  }
+  .page-header-actions { width: 100%; flex-wrap: wrap; gap: 10px; }
+  .page-header-actions .btn { flex: 1 1 140px; justify-content: center; }
+  .page-title { font-size: 23px; }
+
+  /* Stack every multi-column layout */
+  .form-grid,
+  .form-row,
+  .details-grid,
+  .form-options { grid-template-columns: 1fr !important; }
+
+  .form-grid .full,
+  .form-row .full { grid-column: auto !important; }
+
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { padding: 16px; }
+  .stat-number { font-size: 26px; }
+
+  .form-card { padding: 20px; }
+
+  .gallery-thumbs { grid-template-columns: repeat(2, 1fr); }
+
+  /* Tap targets + prevent iOS zoom on focus */
+  .btn { min-height: 44px; }
+  .nav-list a { padding: 12px 14px; }
+  input, select, textarea { min-height: 44px; font-size: 16px; }
+  input[type="checkbox"], input[type="radio"] { min-height: 0; width: 22px; height: 22px; }
+
+  /* Tables already scroll inside .table-container */
+  .table-container { border-radius: var(--radius, 8px); }
+  .table-container table { min-width: 560px; }
+  th, td { padding: 12px 14px; }
+
+  .section { margin-bottom: 18px; }
+
+  /* Keep long ISO timestamps / emails from overflowing */
+  .main, .form-card, td, th { overflow-wrap: break-word; }
+  .nav-list a { text-decoration: none; }
+}
+
+/* ---- Small phones ---- */
+@media (max-width: 560px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .page-title { font-size: 21px; }
+  .page-header-actions .btn { flex: 1 1 100%; }
+  .form-card { padding: 16px; }
+  .admin-topbar .tb-title { display: none; }
+}

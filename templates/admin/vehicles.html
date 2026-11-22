@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/admin/static/admin.css">
 <title>Vehicles | Admin</title>
 <style>
 :root {
@@ -159,7 +160,7 @@ td { color: var(--fg); }
         <tr>
           <td><strong>{{ v.make }} {{ v.model }}</strong></td>
           <td>{{ v.year }}</td>
-          <td>R {{ v.price_formatted }}</td>
+          <td>R&nbsp;{{ v.price_formatted }}</td>
           <td>{{ v.body_type }} · {{ v.fuel_type }}</td>
           <td><span style="color:var(--accent);font-weight:600;">Available</span></td>
           <td>{% if v.featured %}<span style="color:var(--accent);">★ Yes</span>{% else %}No{% endif %}</td>
@@ -177,5 +178,6 @@ td { color: var(--fg); }
   {% endif %}
 </div>
 
+<script src="/admin/static/admin.js" defer></script>
 </body>
 </html>
