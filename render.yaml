@@ -1,5 +1,5 @@
 # Render blueprint — deploys the Docker image as a free web service.
-# The image ships a pre-seeded SQLite database (11 vehicles + local images),
+# The image ships a pre-seeded SQLite database (92 BNA vehicles + local photos),
 # so the site is fully populated on first boot.
 services:
   - type: web
