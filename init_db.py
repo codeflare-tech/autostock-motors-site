@@ -1,6 +1,7 @@
 """Initialise the database: create tables and seed the first superuser + demo data."""
 from __future__ import annotations
 
+import json
 import os
 import sys
 import uuid
@@ -18,7 +19,7 @@ _ROOT = os.path.dirname(_HERE)
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, func, text
 from sqlalchemy.orm import sessionmaker
 
 from models import (
@@ -354,6 +355,56 @@ def seed_demo_applications(db, vehicles: list):
         db.add(vd)
     db.commit()
     return created
+
+
+def seed_bna_catalog():
+    """Idempotently load the bundled BNA showroom stock (survives fresh DBs)."""
+    manifest = os.path.join(BASE_DIR, "catalog", "bna_vehicles.json")
+    if not os.path.isfile(manifest):
+        return
+    with open(manifest, encoding="utf-8") as fh:
+        rows = json.load(fh).get("vehicles", [])
+    if not rows:
+        return
+
+    db = SessionLocal()
+    try:
+        by_id = {v.id: v for v in db.query(Vehicle).all()}
+        added = 0
+
+        for i, data in enumerate(rows):
+            values = dict(data)
+            values.pop("stock_no", None)
+            target_id = i + 1  # real stock takes over the placeholder slots
+            row = by_id.get(target_id)
+            if row is not None:
+                for key, val in values.items():
+                    setattr(row, key, val)
+            else:
+                db.add(Vehicle(id=target_id, **values))
+                added += 1
+
+        # The generated demo cars are not real stock - hide them from the
+        # public site (which shows only state="New") without deleting them.
+        hidden = 0
+        for v in db.query(Vehicle).all():
+            photos = v.photos or []
+            if isinstance(photos, str):
+                try:
+                    photos = json.loads(photos)
+                except (ValueError, TypeError):
+                    photos = []
+            if any(("placehold.co" in str(p) or "/static/images/vehicle-" in str(p))
+                   for p in photos):
+                if v.state != "Sold":
+                    v.state = "Sold"
+                    hidden += 1
+
+        db.commit()
+        print(f"✅ BNA catalog: {added} added, {hidden} demo cars hidden, "
+              f"{db.query(func.count(Vehicle.id)).filter(Vehicle.state == 'New').scalar()} available")
+    finally:
+        db.close()
 
 
 def init_db():

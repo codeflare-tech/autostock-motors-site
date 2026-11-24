@@ -95,7 +95,7 @@ async def home(request: Request, db: Session = Depends(get_db)):
     stats = {
         "total": db.query(Vehicle).filter_by(state="New").count(),
         "new": db.query(Vehicle).filter_by(state="New", condition=VehicleCondition.New).count(),
-        "used": db.query(Vehicle).filter_by(state="Used").count(),
+        "used": db.query(Vehicle).filter_by(condition=VehicleCondition.Used).count(),
         "suv": db.query(Vehicle).filter_by(body_type=BodyType.SUV).count(),
     }
     # Create a simple settings dict instead of passing the full settings module

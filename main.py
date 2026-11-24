@@ -31,6 +31,7 @@ async def lifespan(app: FastAPI):
     try:
         import init_db
         init_db.init_db()
+        init_db.seed_bna_catalog()
     except Exception as exc:  # never block startup on seeding
         print("seed skipped:", exc)
     yield
